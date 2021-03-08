@@ -4,15 +4,21 @@ import time
 import json
 import plistlib
 
+# 24 hours update frequency (default from upstream)
+# UPDATE_FREQUENCY = 24*60*60
 
-def oneDaySinceLastCheck():
+# 1 hour update frequency
+UPDATE_FREQUENCY = 60*60
+
+
+def shouldUpdate():
     '''
-    Check whether it's been 24 hours since the last github query.
+    Check whether it's been <UPDATE_FREQUENCY> hours since the last github query.
     We keep track of this through the modification time of this file,
     which is updated every time we query github.
     '''
     lastCheck = os.path.getmtime(__file__)
-    if time.time() > 24*60*60 + lastCheck:
+    if time.time() > UPDATE_FREQUENCY + lastCheck:
         os.system('touch ' + __file__)
         return True
     else:
@@ -58,8 +64,7 @@ def update(updateUrl):
     if curlRet != 0 or openRet != 0:
         os.system("osascript -e 'display alert \"Alfred Search Notes workflow failed to update.\" as critical' 2>/dev/null")
     
-    
-if oneDaySinceLastCheck():
+if shouldUpdate():
     latestUrl = 'https://api.github.com/repos/sballin/alfred-search-notes-app/releases/latest'
     latestFile = 'latest_release.json'
     retval = os.system('curl --silent --max-time 30 --output %s %s' % (latestFile, latestUrl))
