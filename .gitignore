@@ -1,3 +1,8 @@
+# Logs
+**/*log*.txt
+**/*.log
+
+# Original from upstream
 .DS_STORE
 xcuserdata/
 error_log.txt
